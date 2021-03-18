@@ -1,0 +1,70 @@
+Commands
+
+set string:variable_name any:value			Sets a variable
+var,string:variable_name					Returns the value of a variable
+draw_set_colour_fore colour:colour			Sets the current drawing colour
+draw_set_colour_back colour:colour			Sets the current drawing colour
+draw_clear									Clears the display
+draw_num numeral:value int:x int:y			Draws an int at a set position
+draw_char int:character						Draws a character at a set position, using an int
+draw_text string:text						Draws a string at a set position
+draw_set_position int:x int:y				Moves the cursor to the set position
+draw_title string:newTitle					Changes the title of the console
+
+file_exist string:variableName string:path	Stores 1 if the file exists, 0 if not
+file_write string:path string:dataToWrite	Writes data to a file
+file_read string:variableName string:path int:lineNumber	Reads data from file, and stores it
+file_del string:path						Deletes the specified file
+
+sleep int:milliseconds						Sleep for a set amount of time
+
+add int:value int:addBy string:variable_name		Adds a number by a set amount, and stores it
+sub int:value int:subtractBy string:variable_name	Adds a number by a set amount, and stores it
+mul int:value int:multiplyBy string:variable_name	Adds a number by a set amount, and stores it
+div int:value int:divideBy string:variable_name		Adds a number by a set amount, and stores it
+
+lerp int:start int:end int:modify string:name	Calculates the lerp, and stores it
+sqr int:value string:name
+srt int:value string:name
+sin int:value string:name
+cos int:value string:name
+tan int:value string:name
+clamp int:value int:min int:max string:name
+min int:value int:min string:name
+max int value int:max string:name
+pow int:value int:power string:name
+mod int:value int:modBy string:name
+
+inc string:variableName
+dec string:variableName
+
+input_line string:variableName string:whatToAsk		Stores a string in memory
+input_char string:variableName string:whatToAsk		Stores a character in memory, as an int
+
+operators
+EQU		==
+NEQ		!=
+GRT		>
+EGR		>=
+LWR		<
+ELR		<=
+
+colours
+cl_White
+cl_Black
+cl_Red
+cl_Green
+cl_Blue
+cl_Yellow
+cl_Cyan
+cl_Magenta
+
+Built in functions
+
+_PI_		3.141592653589793
+_CURR_X_		Console cursor x position
+_CURR_Y_		Console cursor y position
+_SCREEN_WID_	Width of the console
+_SCREEN_HEI_	Height of the console
+_ENDL_		Puts a new line in a string
+_BLANK_			Empty string
