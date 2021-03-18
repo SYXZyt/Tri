@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Tri
+﻿namespace Tri
 {
     public class TRI_COMMAND_FAILED : Error
     {

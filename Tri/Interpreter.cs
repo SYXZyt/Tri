@@ -7,12 +7,18 @@ namespace Tri
 {
     class Interpreter
     {
-        List<string> commands = new List<string>();
-        Dictionary<string, string> variables = new Dictionary<string, string>();
-        Dictionary<string, int> labels = new Dictionary<string, int>();
-        public StreamWriter writer;
-        public int lineNumber;
+        readonly List<string> commands = new List<string>(); //Stores all commands
+        readonly Dictionary<string, string> variables = new Dictionary<string, string>(); //Stores all variables the program is using
+        readonly Dictionary<string, int> labels = new Dictionary<string, int>(); //Stores a list of all labels in the program
+        public StreamWriter writer; //Used for reading data
+        public int lineNumber; //Current line number
 
+        /// <summary>
+        /// Read the specific line of a text file
+        /// </summary>
+        /// <param name="fileName">Path of file to read</param>
+        /// <param name="targetLine">What line to read</param>
+        /// <returns>Text stored on that line</returns>
         string ReadLineOfFile(string fileName, int targetLine)
         {
             using (StreamReader sr = new StreamReader(fileName))
@@ -25,23 +31,39 @@ namespace Tri
             }
         }
 
+        /// <summary>
+        /// Calculates lerp
+        /// </summary>
+        /// <param name="start">Start value</param>
+        /// <param name="end">Target value</param>
+        /// <param name="value">How far, think of speed if working with translations</param>
+        /// <returns></returns>
         public float Lerp(float start, float end, float value)
         {
             return start * (1 - value) + end * value;
         }
 
+        /// <summary>
+        /// Add a command
+        /// </summary>
+        /// <param name="command">commandToAdd</param>
         public void AddCommand(string command)
         {
             commands.Add(command);
         }
 
+        /// <summary>
+        /// Check every line, and add labels to the list if a label found. This is to allow to jump to labels, even if the program has not gotten that far
+        /// </summary>
         void CheckForLabels()
         {
+            //Loop for every command in the file, in order to check it
             int num = 0;
             foreach (string command in commands)
             {
                 string[] tokens = command.Split(' ');
 
+                //Only bother checking the first token, to avoid goto commands being added to the list
                 if (tokens[0].StartsWith(":"))
                 {
                     try
@@ -50,6 +72,7 @@ namespace Tri
                     }
                     catch
                     {
+                        //Throw an error if a label already exists
                         Error error = new TRI_COMMAND_FAILED($"Label already exists - Line {num+1}");
                     }
                 }
@@ -57,10 +80,16 @@ namespace Tri
             }
         }
 
+        /// <summary>
+        /// Execute the condition, in the if statement
+        /// </summary>
+        /// <param name="tokens">Split command to check</param>
+        /// <returns>True if the statement is true, false otherwise</returns>
         bool ExecuteCondition(string[] tokens)
         {
             switch (tokens[2])
             {
+                //Check the command, and return a different value, based on the operator
                 case "EQU": return tokens[1] == tokens[3];
                 case "NEQ": return tokens[1] != tokens[3];
                 case "GRT": return int.Parse(tokens[1]) > int.Parse(tokens[3]);
@@ -71,8 +100,12 @@ namespace Tri
             }
         }
 
+        /// <summary>
+        /// Run all of the commands stored in memory
+        /// </summary>
         public void Run()
         {
+            //Check to see if the program has any labels
             CheckForLabels();
 
             while (lineNumber < commands.Count)
@@ -83,14 +116,21 @@ namespace Tri
                 }
                 if (!ExecuteCommand(commands[lineNumber]))
                 {
+                    //Throw an error, if the command failed for some reason
                     Error error = new TRI_COMMAND_FAILED($"The command failed to execute: {commands[lineNumber]}");
                 }
                 lineNumber++;
             }
         }
 
+        /// <summary>
+        /// Converts a Tri colour const into a console colour
+        /// </summary>
+        /// <param name="colour">Tri colour</param>
+        /// <returns>ConsoleColor</returns>
         public ConsoleColor GetColour(string colour)
         {
+            //Get rid of cl_
             colour = colour.Remove(0, 3);
 
             switch(colour)
@@ -108,29 +148,43 @@ namespace Tri
             }
         }
 
+        /// <summary>
+        /// Check to see if the variable exists, and return it
+        /// </summary>
+        /// <param name="variableName">Name of the variable to check</param>
+        /// <returns>What value it contains</returns>
         public string GetVariable(string variableName)
         {
+            //Check if the variable exists
             if (variables.ContainsKey(variableName))
             {
+                //Return it
                 string var = variables[variableName];
                 return var;
             }
             else
             {
+                //Throw an error if it does not exist
                 Error error = new TRI_VARIABLE_DOES_NOT_EXIST($"{variableName} does not exist", lineNumber);
                 return "";
             }
         }
 
+        /// <summary>
+        /// Set a variable
+        /// </summary>
+        /// <param name="variableName">What the name is</param>
+        /// <param name="value">What value to save</param>
         public void SetVariable(string variableName, string value)
         {
-            //If infinity is set
+            //If infinity is set, since something has gone wrong, because infinity never needs to be set
             if (value == "∞")
             {
                 //Most likely caused by a division by 0 error, so throw that error
                 Error error = new TRI_DIVISION_BY_ZERO(lineNumber);
             }
 
+            //Update the variable if it exists, otherwise create it
             if (variables.ContainsKey(variableName))
             {
                 variables[variableName] = value;
@@ -141,6 +195,11 @@ namespace Tri
             }
         }
 
+        /// <summary>
+        /// Execute a command
+        /// </summary>
+        /// <param name="command">What command to run</param>
+        /// <returns>True if the command ran correctly</returns>
         public bool ExecuteCommand(string command)
         {
             //Convert to array
