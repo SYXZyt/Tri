@@ -1,8 +1,0 @@
-C:\Users\xxjak\Desktop\Tri\bin\Debug\info.txt
-C:\Users\xxjak\Desktop\Tri\bin\Debug\Tri.exe.config
-C:\Users\xxjak\Desktop\Tri\bin\Debug\Tri.exe
-C:\Users\xxjak\Desktop\Tri\bin\Debug\Tri.pdb
-C:\Users\xxjak\Desktop\Tri\obj\Debug\Tri.csprojAssemblyReference.cache
-C:\Users\xxjak\Desktop\Tri\obj\Debug\Tri.csproj.CoreCompileInputs.cache
-C:\Users\xxjak\Desktop\Tri\obj\Debug\Tri.exe
-C:\Users\xxjak\Desktop\Tri\obj\Debug\Tri.pdb
