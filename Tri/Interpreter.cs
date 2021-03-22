@@ -11,6 +11,7 @@ namespace Tri
         readonly Dictionary<string, string> variables = new Dictionary<string, string>(); //Stores all variables the program is using
         readonly Dictionary<string, int> labels = new Dictionary<string, int>(); //Stores a list of all labels in the program
         public StreamWriter writer; //Used for reading data
+        public StreamReader reader;
         public int lineNumber; //Current line number
 
         /// <summary>
@@ -19,16 +20,14 @@ namespace Tri
         /// <param name="fileName">Path of file to read</param>
         /// <param name="targetLine">What line to read</param>
         /// <returns>Text stored on that line</returns>
-        string ReadLineOfFile(string fileName, int targetLine)
+        string ReadLineOfFile(int targetLine)
         {
-            using (StreamReader sr = new StreamReader(fileName))
+            StreamReader sr = reader;
+            for (int i = 1; i < targetLine; i++)
             {
-                for (int i = 1; i < targetLine; i++)
-                {
-                    sr.ReadLine();
-                }
-                return sr.ReadLine();
+                sr.ReadLine();
             }
+            return sr.ReadLine();
         }
 
         /// <summary>
@@ -266,21 +265,58 @@ namespace Tri
             {
                 switch (tokens[0])
                 {
+                    case "end":
+                        {
+                            Environment.Exit(0);
+                        }
+                        return true;
+                    case "help":
+                        {
+                            Console.WriteLine("Non available");
+                        }
+                        return true;
                     case "file_del":
                         {
                             File.Delete(tokens[1]);
                         }
                         return true;
+                    case "file_open_write":
+                        {
+                            string x = "";
+                            for (int i = 1; i < tokens.Length; i++)
+                            {
+                                x += tokens[i];
+                                if (i < tokens.Length - 1)
+                                {
+                                    x += " ";
+                                }
+                            }
+                            writer = new StreamWriter(x);
+                        }
+                        return true;
+                    case "file_open_read":
+                        {
+                            string x = "";
+                            for (int i = 1; i < tokens.Length; i++)
+                            {
+                                x += tokens[i];
+                                if (i < tokens.Length - 1)
+                                {
+                                    x += " ";
+                                }
+                            }
+                            reader = new StreamReader(x);
+                        }
+                        return true;
                     case "file_read":
                         {
-                            SetVariable(tokens[1], ReadLineOfFile(tokens[2], int.Parse(tokens[3])));
+                            SetVariable(tokens[1], ReadLineOfFile(int.Parse(tokens[2])));
                         }
                         return true;
                     case "file_write":
                         {
-                            writer = new StreamWriter(tokens[1]);
                             string x = "";
-                            for (int i = 2; i < tokens.Length; i++)
+                            for (int i = 1; i < tokens.Length; i++)
                             {
                                 x += tokens[i];
                                 if (i < tokens.Length - 1)
@@ -289,8 +325,16 @@ namespace Tri
                                 }
                             }
                             writer.WriteLine(x);
-
+                        }
+                        return true;
+                    case "file_close_write":
+                        {
                             writer.Close();
+                        }
+                        return true;
+                    case "file_close_read":
+                        {
+                            reader.Close();
                         }
                         return true;
                     case "file_exist":

@@ -6,6 +6,11 @@
         public TRI_COMMAND_FAILED(string message, int lineNumber) : base(message, lineNumber) { }
     }
 
+    public class TRI_FILE_UNREADABLE : Error
+    {
+        public TRI_FILE_UNREADABLE(string fileName) : base($"The file {fileName} could not be opened") { }
+    }
+
     public class TRI_VARIABLE_DOES_NOT_EXIST : Error
     {
         public TRI_VARIABLE_DOES_NOT_EXIST(string message, int lineNumber) : base(message, lineNumber) { }

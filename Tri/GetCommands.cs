@@ -5,6 +5,8 @@ namespace Tri
 {
     class GetCommands
     {
+        static StreamReader reader;
+
         /// <summary>
         /// Reads a file and stores all of the read commands into a list, before executing the commands
         /// </summary>
@@ -16,7 +18,14 @@ namespace Tri
 
             if (!hardCode)
             {
-                StreamReader reader = new StreamReader(fileName);
+                try
+                {
+                    reader = new StreamReader(fileName);
+                }
+                catch
+                {
+                    _ = new TRI_FILE_UNREADABLE(fileName);
+                }
 
                 while (!reader.EndOfStream)
                 {
@@ -26,9 +35,8 @@ namespace Tri
             }
             else
             {
-                //Load this sample program into the command list
-                interpreter.AddCommand("draw_title No program loaded");
-                interpreter.AddCommand("draw_text No program loaded");
+                //Go to the command line
+                CommandLine.MainLoop();
             }
             //Run all program that have been stored into the list
             interpreter.Run();

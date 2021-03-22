@@ -12,8 +12,12 @@ draw_set_position int:x int:y				Moves the cursor to the set position
 draw_title string:newTitle					Changes the title of the console
 
 file_exist string:variableName string:path	Stores 1 if the file exists, 0 if not
+file_open_write string:path					Opens a file, ready to write
+file_open_read string:path					Opens a file, ready to read from
 file_write string:path string:dataToWrite	Writes data to a file
-file_read string:variableName string:path int:lineNumber	Reads data from file, and stores it
+file_read string:variableName int:lineNumber	Reads data from file, and stores it
+file_close_write							Closes the file writer
+file_close_read								Closes the file reader
 file_del string:path						Deletes the specified file
 
 sleep int:milliseconds						Sleep for a set amount of time
