@@ -1,10 +1,29 @@
 ﻿using System;
 using System.IO;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Tri
 {
+    struct Coord
+    {
+        public int X
+        {
+            get;
+            set;
+        }
+        public int Y
+        {
+            get;
+            set;
+        }
+
+        public Coord(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
     class Interpreter
     {
         readonly List<string> commands = new List<string>(); //Stores all commands
@@ -13,6 +32,18 @@ namespace Tri
         public StreamWriter writer; //Used for reading data
         public StreamReader reader;
         public int lineNumber; //Current line number
+
+        public enum Direction
+        {
+            U,
+            UR,
+            R,
+            DR,
+            D,
+            DL,
+            L,
+            UL
+        }
 
         /// <summary>
         /// Read the specific line of a text file
@@ -89,13 +120,20 @@ namespace Tri
             switch (tokens[2])
             {
                 //Check the command, and return a different value, based on the operator
-                case "EQU": return tokens[1] == tokens[3];
-                case "NEQ": return tokens[1] != tokens[3];
-                case "GRT": return int.Parse(tokens[1]) > int.Parse(tokens[3]);
-                case "EGR": return int.Parse(tokens[1]) >= int.Parse(tokens[3]);
-                case "LWR": return int.Parse(tokens[1]) < int.Parse(tokens[3]);
-                case "ELR": return int.Parse(tokens[1]) <= int.Parse(tokens[3]);
-                default:    return tokens[1] == tokens[3];
+                case "==": return tokens[1] == tokens[3];
+                case "!=": return tokens[1] != tokens[3];
+                case ">": return int.Parse(tokens[1]) > int.Parse(tokens[3]);
+                case ">=": return int.Parse(tokens[1]) >= int.Parse(tokens[3]);
+                case "<": return int.Parse(tokens[1]) < int.Parse(tokens[3]);
+                case "<=": return int.Parse(tokens[1]) <= int.Parse(tokens[3]);
+                default:
+                    string temp = "";
+                    foreach (string x in tokens)
+                    {
+                        temp += (x + " ");
+                    }
+                    _ = new TRI_OPERATOR_NOT_RECOGNISED(temp, lineNumber);
+                    return false;
             }
         }
 
@@ -138,7 +176,7 @@ namespace Tri
                 case "Black": return ConsoleColor.Black;
                 case "Red": return ConsoleColor.Red;
                 case "Green": return ConsoleColor.Green;
-                case "Blue": return ConsoleColor.Blue;
+                case "Blue": return ConsoleColor.DarkBlue;
                 case "Yellow": return ConsoleColor.DarkYellow;
                 case "Cyan": return ConsoleColor.Cyan;
                 case "Magenta": return ConsoleColor.Magenta;
@@ -169,6 +207,42 @@ namespace Tri
             }
         }
 
+        static Coord MoveBuffer(Coord coord, Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.U:
+                    coord.X--;
+                    break;
+                case Direction.UR:
+                    coord.Y--;
+                    coord.X++;
+                    break;
+                case Direction.R:
+                    coord.X++;
+                    break;
+                case Direction.DR:
+                    coord.Y++;
+                    coord.X++;
+                    break;
+                case Direction.D:
+                    coord.Y++;
+                    break;
+                case Direction.DL:
+                    coord.Y++;
+                    coord.X--;
+                    break;
+                case Direction.L:
+                    coord.X--;
+                    break;
+                case Direction.UL:
+                    coord.Y--;
+                    coord.X--;
+                    break;
+            }
+            return coord;
+        }
+
         /// <summary>
         /// Set a variable
         /// </summary>
@@ -194,6 +268,42 @@ namespace Tri
             }
         }
 
+        Direction GetDirection(Coord s, Coord e)
+        {
+            if (e.Y < s.Y && e.X == s.X)
+            {
+                return Direction.U;
+            }
+            else if (e.Y < s.Y && e.X < s.X)
+            {
+                return Direction.UL;
+            }
+            else if (e.Y == s.Y && e.X < s.X)
+            {
+                return Direction.L;
+            }
+            else if (e.Y > s.Y && e.X < s.X)
+            {
+                return Direction.DL;
+            }
+            else if (e.Y > s.Y && e.X == s.X)
+            {
+                return Direction.D;
+            }
+            else if (e.Y > s.Y && e.X > s.X)
+            {
+                return Direction.DR;
+            }
+            else if (e.Y == s.Y && e.X > s.X)
+            {
+                return Direction.R;
+            }
+            else
+            {
+                return Direction.UR;
+            }
+        }
+
         /// <summary>
         /// Execute a command
         /// </summary>
@@ -213,7 +323,7 @@ namespace Tri
             //Sub tokens, ie var,variable will be replaced with the value stored
             for (int i = 0; i < tokens.Length; i++)
             {
-                if (tokens[i].StartsWith("var"))
+                if (tokens[i].StartsWith("$var"))
                 {
                     string[] splitToken = tokens[i].Split(',');
 
@@ -273,6 +383,32 @@ namespace Tri
                     case "help":
                         {
                             Console.WriteLine("Non available");
+                        }
+                        return true;
+                    case "cdr":
+                        {
+                            Console.WriteLine(Directory.GetCurrentDirectory());
+                        }
+                        return true;
+                    case "ls":
+                        {
+                            Console.WriteLine("=== Listing File ===");
+                            string x = "";
+                            for (int i = 1; i < tokens.Length; i++)
+                            {
+                                x += tokens[i];
+                                if (i < tokens.Length - 1)
+                                {
+                                    x += " ";
+                                }
+                            }
+                            StreamReader y = new StreamReader(x);
+                            while (!y.EndOfStream)
+                            {
+                                Console.WriteLine(y.ReadLine());
+                            }
+                            y.Close();
+
                         }
                         return true;
                     case "file_del":
@@ -348,6 +484,42 @@ namespace Tri
                             {
                                 SetVariable(tokens[1], "0");
                             }
+                        }
+                        return true;
+                    case "exc":
+                        {
+                            string x = "";
+                            for (int i = 1; i < tokens.Length; i++)
+                            {
+                                x += tokens[i];
+                                if (i < tokens.Length - 1)
+                                {
+                                    x += " ";
+                                }
+                            }
+                            ExecuteCommand(x);
+                        }
+                        return true;
+                    case "draw_line":
+                        {
+                            //Calculate direction
+                            Direction dir;
+
+                            Coord s = new Coord(int.Parse(tokens[1]), int.Parse(tokens[2]));
+                            Coord e = new Coord(int.Parse(tokens[3]), int.Parse(tokens[4]));
+                            dir = GetDirection(s, e);
+                            float xDif = e.X - s.X;
+                            float yDif = e.Y - s.Y;
+                            int lineLength = (int)Math.Sqrt((xDif * xDif) + (yDif * yDif));
+                            Coord currentCursorPos = new Coord(Console.CursorLeft, Console.CursorTop);
+                            Coord buffer = s;
+                            for (int i = 0; i < lineLength; i++)
+                            {
+                                Console.SetCursorPosition(buffer.X, buffer.Y);
+                                Console.Write(tokens[5]);
+                                buffer = MoveBuffer(buffer, dir);
+                            }
+                            Console.SetCursorPosition(currentCursorPos.X, currentCursorPos.Y);
                         }
                         return true;
                     case "inc":
@@ -560,6 +732,20 @@ namespace Tri
                             Console.SetCursorPosition(int.Parse(tokens[1]), int.Parse(tokens[2]));
                         }
                         return true;
+                    case "_VES_INFO_":
+                        {
+                            VersionInfo versionInfo = new VersionInfo();
+                            Console.WriteLine($"Tri {versionInfo.Major}.{versionInfo.Minor} " +
+                            $"(v{versionInfo.Major}.{versionInfo.Minor}.{versionInfo.Patch}, " +
+                            $"{versionInfo.BuildTime.Day} {versionInfo.MonthName()} {versionInfo.BuildTime.Year}, " +
+                            $"{versionInfo.BuildTime.Hour}:{versionInfo.BuildTime.Minute}:{versionInfo.BuildTime.Second})");
+                        }
+                        return true;
+                    case "exit":
+                        {
+                            Environment.Exit(0);
+                        }
+                        return true;
                     case "input_line":
                         {
                             string x = "";
@@ -571,7 +757,7 @@ namespace Tri
                                     x += " ";
                                 }
                             }
-                            Console.WriteLine(x);
+                            Console.Write(x);
                             SetVariable(tokens[1], Console.ReadLine());
                         }
                         return true;
@@ -586,7 +772,7 @@ namespace Tri
                                     x += " ";
                                 }
                             }
-                            Console.WriteLine(x);
+                            Console.Write(x);
                             int y = (int)Console.ReadKey().Key;
                             SetVariable(tokens[1], y.ToString());
                         }
@@ -595,28 +781,24 @@ namespace Tri
                         {
                             if (!labels.ContainsKey(tokens[1]))
                             {
-                                Error error;
-                                if (!tokens[1].StartsWith(":"))
-                                {
-                                    error = new TRI_LABEL_NOT_FOUND($"{tokens[1]} does not fit the label format, therefore it", lineNumber);
-                                }
-                                else
-                                {
-                                    error = new TRI_LABEL_NOT_FOUND(tokens[1], lineNumber);
-                                }
+                                _ = new TRI_LABEL_NOT_FOUND(tokens[1], lineNumber);
                             }
                             else
                             {
-                                lineNumber = labels[tokens[1]];
+                                if (tokens[1].StartsWith(":"))
+                                {
+                                    lineNumber = labels[tokens[1]];
+                                }
+                                else
+                                {
+                                    lineNumber = int.Parse(tokens[1]);
+                                }
                             }
                         }
                         return true;
-                    case "break":
-                        { }
-                        return true;
                     default:
                         {
-                            Error error = new TRI_COMMAND_FAILED($"{command} is not a recognised command", lineNumber);
+                            _ = new TRI_COMMAND_FAILED($"{command} is not a recognised command", lineNumber);
                         }
                         return false;
                 }

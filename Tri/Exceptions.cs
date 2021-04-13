@@ -25,4 +25,9 @@
     {
         public TRI_LABEL_NOT_FOUND(string labelName, int lineNumber) : base($"ERROR {labelName} was not found", lineNumber) { }
     }
+
+    public class TRI_OPERATOR_NOT_RECOGNISED : Error
+    {
+        public TRI_OPERATOR_NOT_RECOGNISED(string line, int lineNumber) : base($"ERROR {line}used an unrecognised operator ", lineNumber) { }
+    }
 }

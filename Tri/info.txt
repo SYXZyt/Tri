@@ -1,15 +1,15 @@
 Commands
 
 set string:variable_name any:value			Sets a variable
-var,string:variable_name					Returns the value of a variable
+$var,string:variable_name					Returns the value of a variable
 draw_set_colour_fore colour:colour			Sets the current drawing colour
 draw_set_colour_back colour:colour			Sets the current drawing colour
 draw_clear									Clears the display
-draw_num numeral:value int:x int:y			Draws an int at a set position
 draw_char int:character						Draws a character at a set position, using an int
 draw_text string:text						Draws a string at a set position
 draw_set_position int:x int:y				Moves the cursor to the set position
 draw_title string:newTitle					Changes the title of the console
+draw_line int:x1 int:y1 int:x2 int:y2 char:character		Draws a line between two points, using a certain character
 
 file_exist string:variableName string:path	Stores 1 if the file exists, 0 if not
 file_open_write string:path					Opens a file, ready to write
@@ -19,13 +19,18 @@ file_read string:variableName int:lineNumber	Reads data from file, and stores it
 file_close_write							Closes the file writer
 file_close_read								Closes the file reader
 file_del string:path						Deletes the specified file
+ls string:path								Lists all the lines that a file has
+cdr											Draws the current directory to the screen
 
 sleep int:milliseconds						Sleep for a set amount of time
+exc string:command							Executes a string as a tri command
+exit										Exits the program or interpreter command line
+goto string:labelName/int:lineNumber		Jumps to a label, or to a specific line number
 
 add int:value int:addBy string:variable_name		Adds a number by a set amount, and stores it
-sub int:value int:subtractBy string:variable_name	Adds a number by a set amount, and stores it
-mul int:value int:multiplyBy string:variable_name	Adds a number by a set amount, and stores it
-div int:value int:divideBy string:variable_name		Adds a number by a set amount, and stores it
+sub int:value int:subtractBy string:variable_name	Subs a number by a set amount, and stores it
+mul int:value int:multiplyBy string:variable_name	Times a number by a set amount, and stores it
+div int:value int:divideBy string:variable_name		Divides a number by a set amount, and stores it
 
 lerp int:start int:end int:modify string:name	Calculates the lerp, and stores it
 sqr int:value string:name
@@ -46,12 +51,12 @@ input_line string:variableName string:whatToAsk		Stores a string in memory
 input_char string:variableName string:whatToAsk		Stores a character in memory, as an int
 
 operators
-EQU		==
-NEQ		!=
-GRT		>
-EGR		>=
-LWR		<
-ELR		<=
+==
+!=
+>
+>=
+<
+<=
 
 colours
 cl_White
@@ -72,3 +77,10 @@ _SCREEN_WID_	Width of the console
 _SCREEN_HEI_	Height of the console
 _ENDL_		Puts a new line in a string
 _BLANK_			Empty string
+_VES_INFO_		Draws the interpreter version
+
+Labels
+
+labels start with :
+e.g. :LoopHere
+e.g. goto :LoopHere

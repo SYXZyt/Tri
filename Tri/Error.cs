@@ -13,16 +13,18 @@ namespace Tri
         /// <param name="showLineNum">Should the line number, that caused an error, be displayed</param>
         public virtual void DisplayError(bool showLineNum)
         {
+            ConsoleColor prevFrg = Console.ForegroundColor;
+            ConsoleColor prevBkg = Console.BackgroundColor;
+
             //Set the console colour, to make the error stand out, and look important
             Console.ForegroundColor = ConsoleColor.Red;
             Console.BackgroundColor = ConsoleColor.Black;
             //Draw the message, and the line number if allowed
             Console.WriteLine(message);
             if (showLineNum) { Console.WriteLine($"Error at line {lineNumber + 1}"); }
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
-            //Finally end the program
-            Environment.Exit(0);
+
+            Console.ForegroundColor = prevFrg;
+            Console.BackgroundColor = prevBkg;
         }
 
         /// <summary>

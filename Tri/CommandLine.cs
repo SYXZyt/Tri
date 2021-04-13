@@ -34,8 +34,8 @@ namespace Tri
         {
             Major = "1";
             Minor = "0";
-            Patch = "3";
-            BuildTime = new DateTime(2021, 3, 19, 17, 57, 10);
+            Patch = "5";
+            BuildTime = new DateTime(2021, 4, 12, 05, 14, 17);
             
         }
     }
@@ -59,6 +59,12 @@ namespace Tri
                 Console.Write(">>> ");
                 string input = Console.ReadLine();
                 string temp = input.ToLower();
+
+                if (temp == "exit")
+                {
+                    Environment.Exit(0);
+                }
+
                 interpreter.ExecuteCommand(input);
             }
         }
