@@ -20,7 +20,9 @@ file_close_write							Closes the file writer
 file_close_read								Closes the file reader
 file_del string:path						Deletes the specified file
 ls string:path								Lists all the lines that a file has
-cdr											Draws the current directory to the screen
+dir											Draws the current directory to the screen
+cd string:path								Changes the current directory
+run string:path								Runs the program if a file with that name exists
 
 sleep int:milliseconds						Sleep for a set amount of time
 exc string:command							Executes a string as a tri command
@@ -78,6 +80,15 @@ _SCREEN_HEI_	Height of the console
 _ENDL_		Puts a new line in a string
 _BLANK_			Empty string
 _VES_INFO_		Draws the interpreter version
+_CURR_USER_		Gets the current user
+
+Built in functs can be chained, without needing spaces. APART FROM _VES_INFO_
+
+e.g. draw_text _PI__ENDL__CURR_USER_
+Would draw:
+3.141592653589793
+*username*
+Ves info is used as its own command, not as a const or built in var
 
 Labels
 

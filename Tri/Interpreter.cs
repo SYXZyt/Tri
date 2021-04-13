@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Tri
@@ -340,34 +341,39 @@ namespace Tri
                     tokens[i] = GetColour(tokens[i]).ToString();
                 }
 
-                if (tokens[i] == "_PI_")
+                if (tokens[i].Contains("_PI_"))
                 {
-                    tokens[i] = 3.141592653589793.ToString();
+                    tokens[i] = tokens[i].Replace("_PI_", "3.141592653589793");
                 }
 
-                if (tokens[i] == "_CURR_X_")
+                if (tokens[i].Contains("_CURR_X_"))
                 {
-                    tokens[i] = Console.CursorLeft.ToString();
+                    tokens[i] = tokens[i].Replace("_CURR_X_", Console.CursorLeft.ToString());
                 }
 
-                if (tokens[i] == "_CURR_Y_")
+                if (tokens[i].Contains("_CURR_Y_"))
                 {
-                    tokens[i] = Console.CursorTop.ToString();
+                    tokens[i] = tokens[i].Replace("_CURR_Y_", Console.CursorTop.ToString());
                 }
 
-                if (tokens[i] == "_SCREEN_WID_")
+                if (tokens[i].Contains("_SCREEN_WID_"))
                 {
-                    tokens[i] = Console.WindowWidth.ToString();
+                    tokens[i] = tokens[i].Replace("_SCREEN_WID_", Console.WindowWidth.ToString());
                 }
 
-                if (tokens[i] == "_SCREEN_HEI_")
+                if (tokens[i].Contains("_SCREEN_HEI_"))
                 {
-                    tokens[i] = Console.WindowHeight.ToString();
+                    tokens[i] = tokens[i].Replace("_SCREEN_HEI_", Console.WindowHeight.ToString());
                 }
 
-                if (tokens[i] == "_BLANK_")
+                if (tokens[i].Contains("_BLANK_"))
                 {
-                    tokens[i] = " ";
+                    tokens[i] = tokens[i].Replace("_BLANK_", " ");
+                }
+
+                if (tokens[i].Contains("_CURR_USER_"))
+                {
+                    tokens[i] = tokens[i].Replace("_CURR_USER_", Environment.UserName);
                 }
             }
 
@@ -385,9 +391,23 @@ namespace Tri
                             Console.WriteLine("Non available");
                         }
                         return true;
-                    case "cdr":
+                    case "dir":
                         {
                             Console.WriteLine(Directory.GetCurrentDirectory());
+                        }
+                        return true;
+                    case "cd":
+                        {
+                            string x = "";
+                            for (int i = 1; i < tokens.Length; i++)
+                            {
+                                x += tokens[i];
+                                if (i < tokens.Length - 1)
+                                {
+                                    x += " ";
+                                }
+                            }
+                            Directory.SetCurrentDirectory(x);
                         }
                         return true;
                     case "ls":
@@ -520,6 +540,21 @@ namespace Tri
                                 buffer = MoveBuffer(buffer, dir);
                             }
                             Console.SetCursorPosition(currentCursorPos.X, currentCursorPos.Y);
+                        }
+                        return true;
+                    case "run":
+                        {
+                            string x = "";
+                            for (int i = 1; i < tokens.Length; i++)
+                            {
+                                x += tokens[i];
+                                if (i < tokens.Length - 1)
+                                {
+                                    x += " ";
+                                }
+                            }
+                            Process.Start(x);
+                            
                         }
                         return true;
                     case "inc":
